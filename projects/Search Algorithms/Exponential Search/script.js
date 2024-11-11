@@ -21,6 +21,7 @@ function draw() {
 }
 
 function drawArray() {
+
     for (let i = 0; i < array.length; i++) {
         let color = i === mid ? 'yellow' : i === low ? 'green' : i === high ? 'red' : 255;
         fill(color);
@@ -52,10 +53,28 @@ function startSearch() {
     target = parseInt(document.getElementById("targetInput").value);
     if (isNaN(target)) return alert("Please enter a valid target number.");
 
-    low = 0;
-    high = array.length - 1;
+
+    if (target < array[0] || target > array[array.length - 1]) {
+        return alert(`Please insert a number with in the range ${array[0]} and ${array[array.length - 1]} `)
+    }
+
+    if (array[0] == target) {
+        found = true;
+        position = 0;
+        return;
+    }
+
+    let i = 1;
+    while (array[i] < target && i < array.length) {
+        debugger;
+        i = i * 2
+    }
+
+    low = Math.floor(i / 2);
+    high = i;
     mid = Math.floor((low + high) / 2);
     found = false;
     position = -1;
+
     loop();  // Start visualization loop
 }
