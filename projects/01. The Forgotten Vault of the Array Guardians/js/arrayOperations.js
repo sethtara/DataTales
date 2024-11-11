@@ -3,8 +3,8 @@
  */
 function addItem() {
     let newItem = Math.floor(Math.random() * 100);  // Generate a random number between 0 and 99.
-    if(arrayVault.length>=vaultSize)
-    arrayVault.push(newItem);  // Add the new item to the vault.
+    if (arrayVault.length < vaultSize)
+        arrayVault.push(newItem);  // Add the new item to the vault.
     drawArray();  // Redraw the array with the new item added.
 }
 
@@ -29,4 +29,23 @@ function popItem() {
 function resetVault() {
     arrayVault = [];  // Clears the array vault.
     drawArray();  // Redraw the array on the canvas after resetting.
+}
+
+function ValidateArraySize() {
+    const insertedValue = document.getElementById('arraySize').value;
+    if (parseInt(insertedValue)) {
+        vaultSize = insertedValue;
+        const toRemove = ['controls', 'canvas-container', 'defaultCanvas0', 'vault']
+
+        toRemove.forEach(element => {
+
+            var div = document.getElementById(element);
+            div.style.display = 'block';  // Change the background color to red
+        });
+
+        document.getElementById('arrayInput').style.display = 'none';
+    }
+    else {
+        alert('Please insert valid array size');
+    }
 }

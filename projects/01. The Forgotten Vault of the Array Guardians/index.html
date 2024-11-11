@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>The Forgotten Vault of the Array Guardians</title>
@@ -8,26 +9,30 @@
 
 
 </head>
+
 <body>
 
-<h1>The Vault of Array Guardians</h1>
-<div id="controls">
-    <button onclick="addItem()">Add Item</button>
-    <button onclick="popItem()">Remove Item</button>
-    <button onclick="searchItem()">Search Item</button>
-    <button onclick="sortArray()">Sort Array</button>
-    <button onclick="resetVault()">Reset Array</button>
+    <h1>The Vault of Array Guardians</h1>
+    <div id="arrayInput">
+        <h3>Enter the size of array</h3>
+        <input id="arraySize" /><button onclick="ValidateArraySize()"> Submit</button>
+    </div>
+    <div id="controls">
+        <button onclick="addItem()">Add Item</button>
+        <button onclick="popItem()">Remove Item</button>
+        <button onclick="searchItem()">Search Item</button>
+        <button onclick="sortArray()">Sort Array</button>
+        <button onclick="resetVault()">Reset Array</button>
 
-</div>
-<div id="canvas-container">
-    <p>The Array Vault:</p>
-    <div id="vault"></div>
-</div>
+    </div>
+    <div id="canvas-container">
+        <p>The Array Vault:</p>
+        <div id="vault"></div>
+    </div>
 
 
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-<script src="js/main.js"></script>
 <script src="js/arrayOperations.js"></script>
 <script src="js/drawFunctions.js"></script>
 <script src="js/searchFunctions.js"></script>

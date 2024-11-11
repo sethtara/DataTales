@@ -5,7 +5,7 @@ async function sortArray() {
                 // Swap
                 [arrayVault[j], arrayVault[j + 1]] = [arrayVault[j + 1], arrayVault[j]];
                 drawArray();
-                await new Promise(r => setTimeout(r, 300)); // Pause for visualization
+                await new Promise(r => setTimeout(r, 30)); // Pause for visualization
             }
         }
     }
