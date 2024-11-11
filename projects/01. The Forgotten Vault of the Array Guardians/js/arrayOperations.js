@@ -3,6 +3,7 @@
  */
 function addItem() {
     let newItem = Math.floor(Math.random() * 100);  // Generate a random number between 0 and 99.
+    if(arrayVault.length>=vaultSize)
     arrayVault.push(newItem);  // Add the new item to the vault.
     drawArray();  // Redraw the array with the new item added.
 }
@@ -10,10 +11,13 @@ function addItem() {
 /**
  * Removes the last item from the arrayVault, updating the array visualization.
  */
-function removeItem() {
+function popItem() {
 
-    if (arrayVault.length > 0) {  // Check if there are items to remove
+    if (arrayVault.length > 0) {// Check if there are items to remove
+
         arrayVault.pop();  // Remove the last item from the vault.
+        console.log(arrayVault);
+
     }
     drawArray();  // Redraw the array after removing the item.
 
