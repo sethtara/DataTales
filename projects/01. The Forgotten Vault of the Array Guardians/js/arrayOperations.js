@@ -3,8 +3,8 @@
  */
 function addItem() {
     let newItem = Math.floor(Math.random() * 100);  // Generate a random number between 0 and 99.
-    if(arrayVault.length>=vaultSize)
-    arrayVault.push(newItem);  // Add the new item to the vault.
+    if (arrayVault.length < vaultSize)
+        arrayVault.push(newItem);  // Add the new item to the vault.
     drawArray();  // Redraw the array with the new item added.
 }
 
