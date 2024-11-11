@@ -11,14 +11,13 @@ function draw() {
     background(220);
     drawArray();  // Visualize the array
 
-    if (!found) exponentialSearchStep();  // Perform a step of jump search
+    if (!found) jumpSearchStep();  // Perform a step of jump search
 
     if (found && target) {
         fill(0);
         textSize(20);
         textAlign(CENTER, CENTER);
         text(`Target ${target} found at position ${position}`, width / 2, height - 30);
-        noLoop();
     }
 }
 
@@ -33,20 +32,16 @@ function drawArray() {
     }
 }
 
-function exponentialSearchStep() {
-    if (low <= high) {
-        mid = Math.floor((low + high) / 2);
-
-        if (array[mid] === target) {
+function jumpSearchStep() {
+    while (low && low <= high) {
+        if (array[low] == target) {
             found = true;
-            position = mid;
-            noLoop();  // Stop once target is found
-        } else {
-            target > array[mid] ? low = mid + 1 : high = mid - 1;
+            position = low;
+            mid = high = low;
+            return;
         }
-    } else {
-        found = true;  // Stop if target not found
-        noLoop();
+        low++;
+        mid = low;
     }
 }
 
@@ -65,13 +60,17 @@ function startSearch() {
         position = 0;
     }
 
+
     if (!found) {
+
         let i = 1;
+        const jumpLength = Math.floor(Math.sqrt(array.length));
+
         while (array[i] < target && i < array.length) {
-            i = i * 2
+            i += jumpLength;
         }
 
-        low = Math.floor(i / 2);
+        low = i - jumpLength;
         high = i;
         mid = Math.floor((low + high) / 2);
         found = false;
