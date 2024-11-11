@@ -2,20 +2,35 @@ body {
     text-align: center;
     font-family: Arial, sans-serif;
 }
+
 #controls {
     margin: 20px;
+    display: none;
 }
+
 button {
     margin: 5px;
     padding: 10px;
     font-size: 1em;
 }
+
 #canvas-container {
     margin: 20px;
     position: relative;
+    display: none;
 }
+
 #vault {
     display: flex;
     justify-content: center;
     margin-top: 20px;
+    display: none;
+}
+
+#arrayInput {
+    display: inline;
+}
+
+#defaultCanvas0 {
+    display: none;
 }

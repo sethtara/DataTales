@@ -30,3 +30,22 @@ function resetVault() {
     arrayVault = [];  // Clears the array vault.
     drawArray();  // Redraw the array on the canvas after resetting.
 }
+
+function ValidateArraySize() {
+    const insertedValue = document.getElementById('arraySize').value;
+    if (parseInt(insertedValue)) {
+        vaultSize = insertedValue;
+        const toRemove = ['controls', 'canvas-container', 'defaultCanvas0', 'vault']
+
+        toRemove.forEach(element => {
+
+            var div = document.getElementById(element);
+            div.style.display = 'block';  // Change the background color to red
+        });
+
+        document.getElementById('arrayInput').style.display = 'none';
+    }
+    else {
+        alert('Please insert valid array size');
+    }
+}
