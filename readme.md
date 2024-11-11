@@ -8,7 +8,7 @@ From basic algorithms to complex data structures, each project here is designed 
 
 ## How to Contribute
 
-We welcome contributions! Feel free to fork the repository, create a branch, and submit pull requests with improvements or new projects.
+We coordially welcome contributions! Feel free to fork the repository, create a branch, and submit pull requests with improvements or new projects.
 
 ## License
 
