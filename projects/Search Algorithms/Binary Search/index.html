@@ -1,22 +1,199 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Binary Search Visualization</title>
-    <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
+<body class="flex items-center justify-center h-screen bg-gray-100">
+<div class="text-center">
+    <h1 class="text-2xl font-bold mb-4">Binary Search Visualization</h1>
 
-<body>
-    <h1>Binary Search Visualization</h1>
-    <div id="inputDiv">
-        <label for="targetInput"></label><input id="targetInput" placeholder="Enter target value" type="number" />
-        <button onclick="startSearch()">Start Search</button>
+    <div class="flex justify-center mb-4">
+        <label for="arraySize" class="mr-2">Array Size:</label>
+        <input type="number" id="arraySize" placeholder="Enter array size"
+               class="px-4 py-2 border rounded-md mb-4 w-20 text-center" min="2" max="25" value="10">
     </div>
-    <div id="visualization"></div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-    <script src="script.js"></script>
-</body>
 
+    <div id="arrayContainer" class="flex justify-center mb-4"></div>
+
+    <p id="status" class="font-semibold mb-4">Enter a target value to start searching...</p>
+
+    <input type="number" id="searchValue" placeholder="Enter target value"
+           class="px-4 py-2 border rounded-md mb-4">
+
+    <div class="flex justify-center space-x-4">
+        <button onclick="startBinarySearch()" class="px-4 py-2 bg-blue-500 text-white rounded-md">Play</button>
+        <button onclick="nextStep()" class="px-4 py-2 bg-green-500 text-white rounded-md">Next Step</button>
+        <button onclick="resetSearch()" class="px-4 py-2 bg-red-500 text-white rounded-md">Reset</button>
+    </div>
+    <!-- Input for controlling speed -->
+    <label for="speedControl" class="text-sm">Speed Control (ms):</label>
+    <input type="range" id="speedControl" min="500" max="3000" step="100" value="1500" class="mx-2">
+    <span id="speedValue">1500ms</span>
+
+</div>
+
+<script>
+    let arr = [];
+    const arrayContainer = document.getElementById("arrayContainer");
+    const statusText = document.getElementById("status");
+    const speedControl = document.getElementById("speedControl");
+    const speedValue = document.getElementById("speedValue");
+
+    let low, high, currentStep, searchSteps, targetValue, autoPlayInterval, isAutoPlaying, intervalTime;
+
+    // Function to generate a random sorted array based on user-defined size
+    function generateRandomArray(size) {
+        arr = Array.from({ length: size }, () => Math.floor(Math.random() * 100)).sort((a, b) => a - b);
+    }
+
+    // Function to render the array with color coding for low, mid, and high positions
+    function renderArray(low, mid, high) {
+        arrayContainer.innerHTML = ''; // Clear existing elements
+        arr.forEach((value, index) => {
+            const element = document.createElement("div");
+            element.classList.add("w-8", "h-8", "flex", "items-center", "justify-center", "text-lg", "border", "border-black", "mx-0.5");
+            if (index === low) element.classList.add("bg-red-200");
+            if (index === mid) element.classList.add("bg-blue-200");
+            if (index === high) element.classList.add("bg-green-200");
+            element.textContent = value;
+            arrayContainer.appendChild(element);
+        });
+    }
+
+    // Initialize binary search steps
+    function initBinarySearch(target) {
+        low = 0;
+        high = arr.length - 1;
+        searchSteps = [];
+        currentStep = 0;
+        targetValue = target;
+
+        // Record each step in searchSteps array
+        while (low <= high) {
+            let mid = Math.floor((low + high) / 2);
+            searchSteps.push({ low, mid, high });
+
+            if (arr[mid] === target) break;
+            else if (arr[mid] < target) low = mid + 1;
+            else high = mid - 1;
+        }
+
+        // After initializing, check if there are search steps and start manual step
+        if (searchSteps.length > 0) {
+            nextStep(); // Start the first step
+        } else {
+            statusText.textContent = "No steps available. Enter a valid target and click Play.";
+        }
+    }
+
+    // Function to start the binary search with auto steps
+    function startBinarySearch() {
+        const searchValue = parseInt(document.getElementById("searchValue").value);
+        if (isNaN(searchValue)) {
+            statusText.textContent = "Please enter a valid number.";
+            return;
+        }
+        resetSearch(false); // Reset without generating new array
+        initBinarySearch(searchValue);
+
+        // Get the interval time from the speed control
+        intervalTime = speedControl.value;
+
+        // Start auto-play mode
+        isAutoPlaying = true;
+        autoPlayInterval = setInterval(() => {
+            if (currentStep < searchSteps.length) {
+                manualStep(false); // Auto-progress through steps
+            } else {
+                clearInterval(autoPlayInterval); // Stop auto play once complete
+            }
+        }, intervalTime); // Use speed control value for delay
+    }
+    // Update the speed value display whenever the slider is changed
+    speedControl.addEventListener("input", function () {
+        const speed = speedControl.value;
+        speedValue.textContent = `${speed}ms`;  // Update the text inside the <span>
+    });
+
+    // Function to go to the next step of the search manually or through play
+    function manualStep(isManual = true) {
+        if (currentStep < searchSteps.length) {
+            const { low, mid, high } = searchSteps[currentStep];
+            renderArray(low, mid, high);
+            statusText.textContent = `Step ${currentStep + 1}: Low=${low}, Mid=${mid}, High=${high}`;
+
+            if (arr[mid] === targetValue) {
+                statusText.textContent += ` | Target ${targetValue} found at index ${mid}!`;
+                currentStep = searchSteps.length; // End steps
+                clearInterval(autoPlayInterval); // Stop auto play if target is found
+            } else {
+                currentStep++;
+                if (currentStep === searchSteps.length) {
+                    statusText.textContent += " | Target not found.";
+                    clearInterval(autoPlayInterval); // Stop auto play if no more steps
+                }
+            }
+        } else {
+            statusText.textContent = "Search complete. No more steps.";
+            clearInterval(autoPlayInterval); // Ensure auto play stops if complete
+        }
+    }
+
+    // Function to handle manual `Next Step` click
+    function nextStep() {
+        if (isAutoPlaying) {
+            // Pause auto-play if it's active
+            clearInterval(autoPlayInterval);
+            isAutoPlaying = false;
+            statusText.textContent = "Auto-play paused. Click Next Step to continue manually.";
+        }
+
+        // Start the binary search steps if not yet started
+        if (currentStep === 0 && searchSteps.length === 0) {
+            const searchValue = parseInt(document.getElementById("searchValue").value);
+            if (!isNaN(searchValue)) {
+                initBinarySearch(searchValue); // Initialize the search if no steps taken yet
+            } else {
+                statusText.textContent = "Please enter a valid number.";
+            }
+        }
+
+        manualStep(true); // Manually progress the step when clicked
+    }
+
+    // Function to reset the search
+    function resetSearch(generateNewArray = true) {
+        clearInterval(autoPlayInterval); // Stop auto play if active
+        isAutoPlaying = false; // Reset auto-play status
+        currentStep = 0;
+        searchSteps = [];
+        low = 0;
+        high = arr.length - 1;
+
+        // Generate a new array if requested
+        if (generateNewArray) {
+            const arraySize = parseInt(document.getElementById("arraySize").value) || 10;
+            generateRandomArray(arraySize);
+        }
+
+        renderArray(0, -1, arr.length - 1);
+        statusText.textContent = "Enter a target value to start searching...";
+    }
+
+    // Event listener to trigger Play when Enter key is pressed
+    document.getElementById("searchValue").addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            startBinarySearch(); // Start binary search when Enter is pressed
+        }
+    });
+
+    // Initialize array on page load
+    resetSearch();
+</script>
+
+
+</body>
 </html>

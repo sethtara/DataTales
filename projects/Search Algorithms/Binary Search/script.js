@@ -1,61 +1,101 @@
-let array = [], target, low, high, mid, found = false, position = -1;
+const arr = [1, 3, 5, 7, 9, 11, 13, 15, 17];
+const arrayContainer = document.getElementById("arrayContainer");
+const statusText = document.getElementById("status");
 
-function setup() {
-    createCanvas(800, 400);
-    frameRate(1);  // Slow down frame rate for visualization
-    array = Array.from({ length: 20 }, () => Math.floor(random(0, 100))).sort((a, b) => a - b);
+let low = 0;
+let high = arr.length - 1;
+let step = 1;
+let paused = false;
+let searchSteps = [];
+let currentStep = 0;
+
+// Function to create and display array elements
+function renderArray(low, mid, high) {
+    arrayContainer.innerHTML = ''; // Clear existing elements
+
+    arr.forEach((value, index) => {
+        const element = document.createElement("div");
+        element.classList.add("array-element");
+
+        // Apply classes based on the current positions of low, mid, and high
+        if (index === low) element.classList.add("low");
+        if (index === mid) element.classList.add("mid");
+        if (index === high) element.classList.add("high");
+
+        element.textContent = value;
+        arrayContainer.appendChild(element);
+    });
 }
 
-function draw() {
-    background(220);
-    drawArray();  // Visualize the array
-
-    if (!found) binarySearchStep();  // Perform a step of binary search
-
-    if (found && target) {
-        fill(0);
-        textSize(20);
-        textAlign(CENTER, CENTER);
-        text(`Target ${target} found at position ${position}`, width / 2, height - 30);
-    }
-}
-
-function drawArray() {
-    for (let i = 0; i < array.length; i++) {
-        let color = i === mid ? 'yellow' : i === low ? 'green' : i === high ? 'red' : 255;
-        fill(color);
-        rect(i * 30 + 20, height / 2, 25, -array[i]);
-        fill(0);
-        textAlign(CENTER, CENTER);
-        text(array[i], i * 30 + 32, height / 2 + 25);
-    }
-}
-
-function binarySearchStep() {
-    if (low <= high) {
-        mid = Math.floor((low + high) / 2);
-
-        if (array[mid] === target) {
-            found = true;
-            position = mid;
-            noLoop();  // Stop once target is found
-        } else {
-            target > array[mid] ? low = mid + 1 : high = mid - 1;
-        }
-    } else {
-        found = true;  // Stop if target not found
-        noLoop();
-    }
-}
-
-function startSearch() {
-    target = parseInt(document.getElementById("targetInput").value);
-    if (isNaN(target)) return alert("Please enter a valid target number.");
-
+// Function to handle binary search visualization
+async function binarySearchVisualizer(target) {
     low = 0;
-    high = array.length - 1;
-    mid = Math.floor((low + high) / 2);
-    found = false;
-    position = -1;
-    loop();  // Start visualization loop
+    high = arr.length - 1;
+    step = 1;
+    searchSteps = [];
+    currentStep = 0;
+
+    statusText.textContent = "Starting search...";
+
+    while (low <= high) {
+        let mid = Math.floor((low + high) / 2);
+
+        // Record the current state for the step
+        searchSteps.push({ low, mid, high });
+
+        if (arr[mid] === target) {
+            statusText.textContent = `Target ${target} found at index ${mid}!`;
+            renderArray(low, mid, high);
+            return;
+        } else if (arr[mid] < target) {
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+
+    statusText.textContent = `Target ${target} not found in the array.`;
 }
+
+// Function to start the binary search from the beginning
+function startBinarySearch() {
+    const searchValue = parseInt(document.getElementById("searchValue").value);
+    if (isNaN(searchValue)) {
+        statusText.textContent = "Please enter a valid number.";
+        return;
+    }
+
+    binarySearchVisualizer(searchValue).then(() => {
+        if (paused) {
+            statusText.textContent = "Search paused.";
+        }
+    });
+}
+
+// Function to pause the search
+function pauseSearch() {
+    paused = true;
+    statusText.textContent = "Search paused.";
+}
+
+// Function to go to the next step of the search
+function nextStep() {
+    if (searchSteps.length === 0) {
+        statusText.textContent = "No steps to advance. Start the search first.";
+        return;
+    }
+
+    if (currentStep < searchSteps.length) {
+        const { low, mid, high } = searchSteps[currentStep];
+        renderArray(low, mid, high);
+        statusText.textContent = `Step ${currentStep + 1}: Low=${low}, Mid=${mid}, High=${high}`;
+        currentStep++;
+    }
+
+    if (currentStep === searchSteps.length) {
+        statusText.textContent = "Search complete.";
+    }
+}
+
+// Initial array rendering
+renderArray(0, -1, arr.length - 1);
