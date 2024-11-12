@@ -34,7 +34,8 @@ function drawArray() {
 }
 
 function exponentialSearchStep() {
-    if (low <= high) {
+    if (!low) return;
+    if (low && low <= high) {
         mid = Math.floor((low + high) / 2);
 
         if (array[mid] === target) {
@@ -55,7 +56,7 @@ function startSearch() {
     target = parseInt(document.getElementById("targetInput").value);
     if (isNaN(target)) return alert("Please enter a valid target number.");
 
-
+    found = false;
     if (target < array[0] || target > array[array.length - 1]) {
         return alert(`Please insert a number with in the range ${array[0]} and ${array[array.length - 1]} `)
     }
